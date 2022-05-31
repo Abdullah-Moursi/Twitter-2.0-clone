@@ -7,13 +7,15 @@ import {
   MailIcon,
   BookmarkIcon,
   CollectionIcon,
+  DotsCircleHorizontalIcon,
+  UserIcon,
 } from '@heroicons/react/outline'
 
 function Sidebar() {
   return (
-    <div>
+    <div className="col-span-2 flex flex-col items-center px-4 md:items-start">
       <img
-        className="h-10 w-10"
+        className="m-3 h-10 w-10"
         src="https://links.papareact.com/drq"
         alt="twiter-logo"
       />
@@ -23,6 +25,8 @@ function Sidebar() {
       <SidebarRow Icon={MailIcon} title="Messages" />
       <SidebarRow Icon={BookmarkIcon} title="Bookmarks" />
       <SidebarRow Icon={CollectionIcon} title="Lists" />
+      <SidebarRow Icon={UserIcon} title="Sign In" />
+      <SidebarRow Icon={DotsCircleHorizontalIcon} title="More" />
     </div>
   )
 }
