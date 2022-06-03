@@ -31,7 +31,7 @@ const TweetBox = () => {
               <PhotographIcon className="h-5 w-5 cursor-pointer transition-transform duration-150 ease-out hover:scale-150" />
               <SearchCircleIcon className="h-5 w-5" />
               <EmojiHappyIcon className="h-5 w-5" />
-              <CalendarIcon className="h-5 w-5" />
+              <CalendarIcon className="h-5 w-5" />``
               <LocationMarkerIcon className="h-5 w-5" />
             </div>
 
