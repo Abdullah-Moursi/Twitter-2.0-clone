@@ -13,7 +13,7 @@ const TweetBox = () => {
   return (
     <div className="flex space-x-2 p-5">
       <img
-        src="https://pbs.twimg.com/profile_images/1520227569110556672/OTWdfQ7T_normal.jpg"
+        src="https://pbs.twimg.com/profile_images/1535666032345595904/brM4eclf_200x200.jpg"
         alt="user-avatar"
         className="mt-4 h-14 w-14 rounded-full object-cover"
       />
@@ -31,7 +31,8 @@ const TweetBox = () => {
               <PhotographIcon className="h-5 w-5 cursor-pointer transition-transform duration-150 ease-out hover:scale-150" />
               <SearchCircleIcon className="h-5 w-5" />
               <EmojiHappyIcon className="h-5 w-5" />
-              <CalendarIcon className="h-5 w-5" />``
+              <CalendarIcon className="h-5 w-5" />
+              ``
               <LocationMarkerIcon className="h-5 w-5" />
             </div>
 
