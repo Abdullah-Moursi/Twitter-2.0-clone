@@ -13,7 +13,7 @@ const TweetBox = () => {
   return (
     <div className="flex space-x-2 p-5">
       <img
-        src="https://pbs.twimg.com/profile_images/1535666032345595904/brM4eclf_200x200.jpg"
+        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRok_BUdv1oJkVi09IkXw3IpMA1F2SN2FUCvA&usqp=CAU"
         alt="user-avatar"
         className="mt-4 h-14 w-14 rounded-full object-cover"
       />
