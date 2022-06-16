@@ -6,9 +6,16 @@ import {
   SearchCircleIcon,
 } from '@heroicons/react/outline'
 import { useSession } from 'next-auth/react'
-import React, { useRef, useState } from 'react'
+import React, { Dispatch, SetStateAction, useRef, useState } from 'react'
+import toast from 'react-hot-toast'
+import { Tweet, TweetBody } from '../typings'
+import { fetchTweets } from '../utils/fetchTweets'
 
-const TweetBox = () => {
+interface Props {
+  setTweets: Dispatch<SetStateAction<Tweet[]>>
+}
+
+const TweetBox = ({ setTweets }: Props) => {
   const [input, setInput] = useState<string>('')
   const [image, setImage] = useState<string>('')
 
@@ -26,6 +33,40 @@ const TweetBox = () => {
 
     setImage(imageInputRef.current.value)
     imageInputRef.current.value = ''
+    setImageUrlBoxIsOpen(false)
+  }
+
+  const postTweet = async () => {
+    const tweetInfo: TweetBody = {
+      text: input,
+      username: session?.user?.name || 'Unknown User',
+      profileImg:
+        session?.user?.image ||
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRok_BUdv1oJkVi09IkXw3IpMA1F2SN2FUCvA&usqp=CAU',
+      image,
+    }
+
+    const result = await fetch(`/api/addTweet`, {
+      body: JSON.stringify(tweetInfo),
+      method: 'POST',
+    })
+
+    const json = await result.json()
+
+    const newTweets = await fetchTweets()
+    setTweets(newTweets)
+
+    toast('Tweet Sent!', {
+      icon: '👍',
+    })
+    return json
+  }
+
+  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault()
+    postTweet()
+    setInput('')
+    setImage('')
     setImageUrlBoxIsOpen(false)
   }
 
@@ -69,6 +110,7 @@ const TweetBox = () => {
             </div>
 
             <button
+              onClick={handleSubmit}
               disabled={(!input && !image) || !session}
               className="rounded-full bg-twitter px-5 py-2 font-bold text-white disabled:opacity-40"
             >
