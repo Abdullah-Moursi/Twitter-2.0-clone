@@ -14,7 +14,7 @@ import { signIn, signOut, useSession } from 'next-auth/react'
 
 function Sidebar() {
   const { data: session } = useSession()
-
+  console.log(session?.user)
   return (
     <div className="col-span-2 flex flex-col items-center px-4 md:items-start">
       <img
@@ -34,6 +34,23 @@ function Sidebar() {
         title={session ? 'Sign Out' : 'Sign In'}
       />
       <SidebarRow Icon={DotsCircleHorizontalIcon} title="More" />
+
+      {session && (
+        <div className="group absolute bottom-10 flex max-w-fit items-center space-x-2 rounded-full px-4 py-3 transition-all duration-200 hover:bg-gray-100">
+          <img
+            src={session?.user?.image || ''}
+            className=" h-14 w-14 rounded-full object-cover"
+          />
+          <div className="flex flex-col ">
+            <p className="hidden text-base font-bold lg:inline-flex lg:text-xl ">
+              {session.user?.name}
+            </p>
+            <p className=" lg:text-m hidden text-base  text-gray-500 lg:inline-flex">
+              @{session?.user?.name?.replace(/\s+/g, '').toLocaleLowerCase()}
+            </p>{' '}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
