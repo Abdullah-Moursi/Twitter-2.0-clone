@@ -18,6 +18,7 @@ interface Props {
 const TweetBox = ({ setTweets }: Props) => {
   const [input, setInput] = useState<string>('')
   const [image, setImage] = useState<string>('')
+  const [imageIsValid, setImageIsValid] = useState<boolean>(true)
 
   const imageInputRef = useRef<HTMLInputElement>(null)
 
@@ -25,49 +26,17 @@ const TweetBox = ({ setTweets }: Props) => {
   const [imageUrlBoxIsOpen, setImageUrlBoxIsOpen] = useState<boolean>(false)
 
 
-
-
-
-  const [imageIsValid, setImageIsValid] = useState<boolean>(true)
-
-  // function isImage(url: string) {
-    
-  //  return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
-
-  //   return /^https?:\/\/.+\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
-  // }
-
-
-
-
-
-
   const addImageToTweet = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault()
 
-    if (!imageInputRef.current?.value) return
-
-
-
-
-    if ((imageInputRef.current.value) && imageIsValid) {
-
-
-
+    if (!imageInputRef.current?.value) setImageIsValid(false)
+    else if (imageInputRef.current.value && imageIsValid) {
       setImage(imageInputRef.current.value)
       imageInputRef.current.value = ''
       setImageUrlBoxIsOpen(false)
-
-
-
-
-      setImageIsValid(false)
     }
-
-
-
   }
 
   const postTweet = async () => {
@@ -124,23 +93,26 @@ const TweetBox = ({ setTweets }: Props) => {
             placeholder="What's Happening?"
           />
           {image && (
-            <div className='relative'>
-            <button className='absolute 
-            h-10 w-10 rounded-full bg-slate-800 hover:opacity-50 text-3xl opacity-70 pb-1 mt-2 ml-2 transition-all duration-200 
-              text-white' onClick={() => setImage('')} ><span>&times;</span>
-                
+            <div className="relative">
+              <button
+                className="absolute 
+            mt-2 ml-2 h-10 w-10 rounded-full bg-slate-800 pb-1 text-3xl text-white opacity-70 transition-all duration-200 
+              hover:opacity-50"
+                onClick={() => setImage('')}
+              >
+                <span>&times;</span>
               </button>
-            <img
-
-
-
-            onError = {() => setImageIsValid(false)}
-
-
-              src={image}
-              alt={input}
-              className="mb-5 h-60 w-full rounded-xl object-contain shadow-lg "
-            />
+              <img
+                onError={({ currentTarget }) => {
+                  currentTarget.onerror = null
+                  setImage('')
+                  setImageIsValid(false)
+                  setImageUrlBoxIsOpen(true)
+                }}
+                src={image}
+                alt={input}
+                className="mb-5 h-60 w-full rounded-xl object-contain shadow-lg "
+              />
             </div>
           )}
           <div className="flex items-center">
@@ -149,15 +121,7 @@ const TweetBox = ({ setTweets }: Props) => {
                 onClick={() => {
                   setImageUrlBoxIsOpen(!imageUrlBoxIsOpen)
 
-
-
-
-
-                  // setImageIsValid(true)
-
-
-
-
+                  setImageIsValid(true)
                 }}
                 className="h-5 w-5 cursor-pointer transition-transform duration-150 ease-out hover:scale-150"
               />
@@ -179,7 +143,7 @@ const TweetBox = ({ setTweets }: Props) => {
           {imageUrlBoxIsOpen && (
             <form className="mt-5 flex rounded-lg bg-twitter/80 py-2 px-4">
               <input
-              onChange={()=>setImageIsValid(true)}
+                onChange={() => setImageIsValid(true)}
                 ref={imageInputRef}
                 className="flex-1 bg-transparent p-2 text-white outline-none placeholder:text-white"
                 type="text"
@@ -195,16 +159,11 @@ const TweetBox = ({ setTweets }: Props) => {
             </form>
           )}
 
-
-
-
-          {/* {!imageIsValid && imageUrlBoxIsOpen && (
-            <p>Please enter a valid image url.</p>
-          )} */}
-
-
-
-
+          {!imageIsValid && imageUrlBoxIsOpen && (
+            <p className="pl-3 text-rose-600">
+              Please enter a valid image URL.
+            </p>
+          )}
         </form>
       </div>
     </div>
