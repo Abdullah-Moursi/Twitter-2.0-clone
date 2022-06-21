@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Comment, Tweet } from '../typings'
+import { Comment, CommentBody, Tweet } from '../typings'
 import TimeAgo from 'react-timeago'
 import {
   ChatAlt2Icon,
@@ -9,6 +9,7 @@ import {
 } from '@heroicons/react/outline'
 import { fetchComments } from '../utils/fetchComments'
 import { useSession } from 'next-auth/react'
+import toast from 'react-hot-toast'
 
 interface Props {
   tweet: Tweet
@@ -20,6 +21,7 @@ const Tweet = ({ tweet }: Props) => {
   const [comments, setComments] = useState<Comment[]>([])
   const [commentBoxVisible, setCommentBoxVisible] = useState<boolean>(false)
   const [commentInput, setCommentInput] = useState<string>('')
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true)
 
   const refreshComments = async () => {
     const comments: Comment[] = await fetchComments(tweet._id)
@@ -30,10 +32,29 @@ const Tweet = ({ tweet }: Props) => {
     refreshComments()
   }, [])
 
-  const handleCommentSubmit = (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
+  const handleCommentSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
+    const commentToast = toast.loading('Posting Reply...')
+
+    const comment: CommentBody = {
+      comment: commentInput,
+      tweetId: tweet._id,
+      username: session?.user?.name || 'Unknown User',
+      profileImg: session?.user?.image || 'https://links.papareact.com/gll',
+    }
+
+    const result = await fetch(`/api/addComments`, {
+      body: JSON.stringify(comment),
+      method: 'POST',
+    })
+
+    toast.success('Reply Posted!', {
+      id: commentToast,
+    })
+    setCommentBoxVisible(false)
+    setCommentInput('')
+    refreshComments()
   }
 
   return (
@@ -41,7 +62,7 @@ const Tweet = ({ tweet }: Props) => {
       <div className="flex space-x-3">
         <img
           className=" h-10 w-10 rounded-full object-cover"
-          src={tweet.profileImg}
+          src={tweet.profileImg || 'https://links.papareact.com/gll'}
           alt={tweet.username}
         />
 
@@ -51,12 +72,15 @@ const Tweet = ({ tweet }: Props) => {
             <p className="hidden text-sm text-gray-500 sm:inline">
               @{tweet.username.replace(/\s+/g, '').toLocaleLowerCase()} ·
             </p>
+
             <TimeAgo
               className="text-sm text-gray-500"
               date={tweet._createdAt}
             />
           </div>
+
           <p className="pt-1">{tweet.text}</p>
+
           {tweet.image && (
             <img
               src={tweet.image}
@@ -69,7 +93,11 @@ const Tweet = ({ tweet }: Props) => {
 
       <div className="mt-5 flex justify-between">
         <div
-          onClick={() => session && setCommentBoxVisible(!commentBoxVisible)}
+          onClick={() =>
+            session
+              ? setCommentBoxVisible(!commentBoxVisible)
+              : setIsLoggedIn(false)
+          }
           className="flex cursor-pointer items-center space-x-3 text-gray-400"
         >
           <ChatAlt2Icon className="h-5 w-5" />
@@ -86,6 +114,9 @@ const Tweet = ({ tweet }: Props) => {
         </div>
       </div>
 
+      {!isLoggedIn && (
+        <p className="mt-2 pl-2 text-rose-600">You have to log-in first!</p>
+      )}
       {commentBoxVisible && (
         <form onSubmit={handleCommentSubmit} className="mt-3 flex space-x-3">
           <input
@@ -122,6 +153,7 @@ const Tweet = ({ tweet }: Props) => {
                     @{comment.username.replace(/\s+/g, '').toLocaleLowerCase()}{' '}
                     ·
                   </p>
+
                   <TimeAgo
                     className="text-sm text-gray-500"
                     date={comment._createdAt}

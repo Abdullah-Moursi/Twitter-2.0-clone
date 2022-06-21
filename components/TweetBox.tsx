@@ -19,12 +19,12 @@ const TweetBox = ({ setTweets }: Props) => {
   const [input, setInput] = useState<string>('')
   const [image, setImage] = useState<string>('')
   const [imageIsValid, setImageIsValid] = useState<boolean>(true)
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true)
 
   const imageInputRef = useRef<HTMLInputElement>(null)
 
   const { data: session } = useSession()
   const [imageUrlBoxIsOpen, setImageUrlBoxIsOpen] = useState<boolean>(false)
-
 
   const addImageToTweet = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -67,10 +67,12 @@ const TweetBox = ({ setTweets }: Props) => {
 
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault()
-    postTweet()
-    setInput('')
-    setImage('')
-    setImageUrlBoxIsOpen(false)
+    if (session) {
+      postTweet()
+      setInput('')
+      setImage('')
+      setImageUrlBoxIsOpen(false)
+    } else setIsLoggedIn(false)
   }
 
   return (
@@ -120,7 +122,6 @@ const TweetBox = ({ setTweets }: Props) => {
               <PhotographIcon
                 onClick={() => {
                   setImageUrlBoxIsOpen(!imageUrlBoxIsOpen)
-
                   setImageIsValid(true)
                 }}
                 className="h-5 w-5 cursor-pointer transition-transform duration-150 ease-out hover:scale-150"
@@ -133,12 +134,17 @@ const TweetBox = ({ setTweets }: Props) => {
 
             <button
               onClick={handleSubmit}
-              disabled={(!input && !image) || !session}
+              disabled={
+                (!input && !image) || (input.trim().length === 0 && !image)
+              }
               className="rounded-full bg-twitter px-5 py-2 font-bold text-white disabled:opacity-40"
             >
               Tweet
             </button>
           </div>
+          {!isLoggedIn && (
+            <p className="mt-2 pl-2 text-rose-600">You have to log-in first!</p>
+          )}
 
           {imageUrlBoxIsOpen && (
             <form className="mt-5 flex rounded-lg bg-twitter/80 py-2 px-4">

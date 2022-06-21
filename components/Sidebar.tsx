@@ -32,13 +32,12 @@ function Sidebar() {
       <SidebarRow
         onClick={session ? signOut : signIn}
         Icon={UserIcon}
-        title={session ? 'Sign Out' : 'Sign In'}
+        title={session ? 'Sign Out' : 'Log In'}
       />
       <SidebarRow Icon={DotsCircleHorizontalIcon} title="More" />
 
       {session && (
-        <div
-          className="group  relative  top-80	flex max-w-fit items-center space-x-2 rounded-full px-4 py-3 transition-all duration-200 hover:bg-gray-100">
+        <div className="group  relative  top-80	flex max-w-fit items-center space-x-2 rounded-full px-4 py-3 transition-all duration-200 hover:bg-gray-100">
           <img
             src={session?.user?.image || ''}
             className=" max-w-14 max-h-14 rounded-full object-cover"
